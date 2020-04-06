@@ -162,7 +162,7 @@ app.get("/api/exercise/log", async(req, res) => {
         const userExist = await users_model.findOne({ _id: userId });
 
         if (userExist) {
-            result["_id"] = userId;
+            result = userExist._id;
             result["username"] = userExist.username;
             var exercises = [];
 
