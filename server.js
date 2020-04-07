@@ -25,9 +25,6 @@ var users_schema = new mongoose.Schema({
     username: {
         type: String,
     },
-    _id: {
-        type: String,
-    },
 });
 
 var exercises_schema = new mongoose.Schema({
@@ -58,7 +55,8 @@ var users_model = mongoose.model("users", users_schema);
 var exercises_model = mongoose.model("exercises", exercises_schema);
 
 app.post("/api/exercise/new-user", async(req, res) => {
-    var newUserName = req.body.username;
+    const newUserName = req.body.username;
+
     try {
         if (newUserName) {
             const user = await users_model.findOne({
@@ -68,24 +66,15 @@ app.post("/api/exercise/new-user", async(req, res) => {
             if (user) {
                 res.send("username already taken");
             } else {
-                var ID = function() {
-                    // Math.random should be unique because of its seeding algorithm.
-                    // Convert it to base 36 (numbers + letters), and grab the first 9 characters
-                    // after the decimal.
-                    return Math.random().toString(36).substr(2, 9);
-                };
-                const new_id = await ID();
-
                 // a document instance
                 const newUser = new users_model({
                     username: newUserName,
-                    _id: new_id,
                 });
 
                 // save model to database
                 await newUser.save(function(err) {
                     if (err) return res.json({ error: err });
-                    res.json({ username: newUserName, _id: new_id });
+                    res.json({ username: newUserName, _id: newUser._id });
                 });
             }
         } else {
